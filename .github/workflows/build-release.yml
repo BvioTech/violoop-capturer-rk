@@ -24,7 +24,7 @@ jobs:
 
       - name: Build for arm-rockchip830-linux-uclibcgnueabihf
         run: |
-          ./build.sh
+          ./build.sh rv1106
           tar -czf dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz dist/video
           sha256sum dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz > dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz.sha256
 

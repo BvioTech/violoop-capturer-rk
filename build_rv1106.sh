@@ -6,7 +6,7 @@ mkdir -p $DST_DIR
 cd $DST_DIR
 
 # configure
-cmake -DBUILD_UNIT_SOCKET_TEST=ON -DBUILD_MAIN=OFF ..
+cmake -DCMAKE_TOOLCHAIN_FILE=/workspace/toolchain.cmake ..
 
 # make
 make -j$(nproc)

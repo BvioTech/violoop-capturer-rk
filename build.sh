@@ -1,13 +1,24 @@
 #!/bin/bash
+build_rv1106(){
+    docker run -it --rm -v .:/app builder:luckfox-pico /app/build_rv1106.sh
+}
 
-DST_DIR="dist"
-
-# create dir
-mkdir -p $DST_DIR
-cd $DST_DIR
-
-# configure
-cmake -DCMAKE_TOOLCHAIN_FILE=/workspace/toolchain.cmake ..
-
-# make
-make -j$(nproc)
+if [ $# -eq 0 ]; then
+	echo "default build for rv1106"
+    build_rv1106
+elif [ $# -eq 1 ]; then
+    case "$1" in
+		"rv1106")
+            build_rv1106
+            ;;
+		"rk3576")
+            # env_rk3576
+            ;;
+        *)
+            echo "Unknown args"
+            exit 1
+    esac
+else
+	echo "Invalid args length"
+	exit 1
+fi
