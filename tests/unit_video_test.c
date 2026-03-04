@@ -12,20 +12,35 @@
 
 #define VIDEO_WIDTH 1920
 #define VIDEO_HEIGHT 1080
-
-#define VENC_CHANNEL 0
 #define BIT_RATE 10 * 1024
 #define GOP 60
+
+#define VENC_CHANNEL 0
 // venc send frame timeout, venc get stream timeout
 #define TIMEOUT 1000
+// i dont know why stream output buffer count is 8
+// in `test_mpi_venc.cpp`, they use 8
+#define STREAM_OUTPUT_BUFFER_COUNT 8
 
 // video device path
 #define VIDEO_PATH "/dev/video0"
 #define BUFFER_COUNT 4
 
+// output path
 #define OUTPUT_PATH "data/frame.h264"
 
-int save_data(unsigned int frame_id, unsigned long long int time, void *data, unsigned int size, void *user_data)
+// running
+static volatile int keep_running = 1;
+
+/**
+ * stop running
+ */
+void stop_running()
+{
+    keep_running = 0;
+}
+
+int output_callback(uint32_t frame_id, uint64_t time, void *data, uint32_t size, void *user_data)
 {
     FILE *f = fopen(OUTPUT_PATH, "wb");
     if (f == NULL)
@@ -42,25 +57,14 @@ int save_data(unsigned int frame_id, unsigned long long int time, void *data, un
     return 0;
 }
 
-// running
-static volatile int keep_running = 1;
-
-/**
- * stop running
- */
-void stop_running()
-{
-    keep_running = 0;
-}
-
 typedef struct
 {
-    int venc_channel_id;
+    int32_t venc_channel_id;
     int video_fd;
-    unsigned int width;
-    unsigned int height;
-    unsigned int vir_width;
-    unsigned int vir_height;
+    uint32_t width;
+    uint32_t height;
+    uint32_t vir_width;
+    uint32_t vir_height;
 } input_args_t;
 
 void *input_loop(void *arg)
@@ -69,8 +73,14 @@ void *input_loop(void *arg)
 
     while (keep_running)
     {
-        // stop after 1 frame, for test
-        int ret = input(args->venc_channel_id, args->video_fd, args->width, args->height, args->vir_width, args->vir_height, true, TIMEOUT);
+        int ret = input(args->venc_channel_id,
+                        args->video_fd,
+                        args->width,
+                        args->height,
+                        args->vir_width,
+                        args->vir_height,
+                        !keep_running,
+                        TIMEOUT);
         if (ret == -1)
         {
             break;
@@ -83,8 +93,9 @@ void *input_loop(void *arg)
 
 typedef struct
 {
-    int venc_channel_id;
-    int socket_fd;
+    int32_t venc_channel_id;
+    uint32_t width;
+    uint32_t height;
 } output_args_t;
 
 void *output_loop(void *arg)
@@ -99,7 +110,7 @@ void *output_loop(void *arg)
         int ret = output(args->venc_channel_id,
                          &stream,
                          TIMEOUT,
-                         save_data,
+                         output_callback,
                          NULL);
         if (ret == -1)
         {
@@ -125,32 +136,40 @@ void *output_loop(void *arg)
 
 int main()
 {
+    uint32_t video_width;
+    uint32_t video_height;
+    char *input_path;
+    char *output_path;
+    uint32_t bit_rate;
+    uint32_t gop;
+
     // regist signal
     signal(SIGINT, stop_running);
     signal(SIGTERM, stop_running);
 
     // calculate size
     MB_PIC_CAL_S cal;
+    // auto calculate
+    // on new hardware, the v4l2 cloud stride correctly. i have no idea why
+    calculate_venc(video_width, video_height, &cal);
+
     // 1920 1080 will be strided to 1920 1088
     // but v4l2 dma can not fill all byes, then venc think the frame is not end and will not work at all
     // that is why we should calculate manually
-    // calculate_venc(VIDEO_WIDTH, VIDEO_HEIGHT, &cal);
-    cal.u32VirWidth = VIDEO_WIDTH;
-    cal.u32VirHeight = VIDEO_HEIGHT;
-    cal.u32MBSize = VIDEO_WIDTH * VIDEO_HEIGHT * 3 / 2;
-    printf("manual calculate ok %d %d %d\n", cal.u32VirWidth, cal.u32VirHeight, cal.u32MBSize);
+    // cal.u32VirWidth = video_width;
+    // cal.u32VirHeight = video_height;
+    // cal.u32MBSize = video_width * video_height * 3 / 2;
+    // printf("manual calculate ok %d %d %d\n", cal.u32VirWidth, cal.u32VirHeight, cal.u32MBSize);
 
     // init venc
-    // i dont know why stream output buffer count is 8
-    // in `test_mpi_venc.cpp`, they use 8
-    int ret = init_venc(VENC_CHANNEL, VIDEO_WIDTH, VIDEO_HEIGHT, BIT_RATE, GOP, 8, cal);
-    if (ret == 1)
+    int ret = init_venc(VENC_CHANNEL, video_width, video_height, bit_rate, gop, STREAM_OUTPUT_BUFFER_COUNT, cal);
+    if (ret == -1)
     {
-        return ret;
+        return -1;
     }
 
     // init v4l2
-    int video_fd = init_v4l2(VIDEO_PATH, VIDEO_WIDTH, VIDEO_HEIGHT);
+    int video_fd = init_v4l2(input_path, video_width, video_height);
     unsigned int buffer_count = init_v4l2_buffers(video_fd, BUFFER_COUNT);
     if (buffer_count == 0)
     {
@@ -192,18 +211,15 @@ int main()
     input_args_t input_args = {
         .venc_channel_id = VENC_CHANNEL,
         .video_fd = video_fd,
-        .width = VIDEO_WIDTH,
-        .height = VIDEO_HEIGHT,
+        .width = video_width,
+        .height = video_height,
         .vir_width = cal.u32VirWidth,
         .vir_height = cal.u32VirHeight,
 
     };
-    output_args_t outpu_args = {
-        .venc_channel_id = VENC_CHANNEL,
-    };
 
     pthread_create(&input_thread, NULL, input_loop, &input_args);
-    pthread_create(&output_thread, NULL, output_loop, &outpu_args);
+    pthread_create(&output_thread, NULL, output_loop, NULL);
 
     // wait thread end
     pthread_join(input_thread, NULL);
@@ -228,5 +244,5 @@ destroy_venc:
     // destroy venc
     destroy_venc(VENC_CHANNEL, memory_pool);
 
-    return ret;
+    return 0;
 }

@@ -1,21 +1,15 @@
 cmake_minimum_required(VERSION 3.22)
 project(video C)
 
-option(BUILD_ENC_TEST "build enc test" OFF)
-option(BUILD_V4L2_TEST "build V4L2 test" OFF)
-option(BUILD_V4L2_FMT_TEST "build V4L2 test" OFF)
-option(BUILD_DMA_TEST "build DMA test" OFF)
-option(BUILD_V4L2_ENC_TEST "build unit v4l2 enc test" OFF)
-option(BUILD_V4L2_QUERY_SIZE_TEST "build v4l2 query size test" OFF)
-option(BUILD_UNIT_SOCKET_TEST "build unit socket test" OFF)
+option(BUILD_UNIT_TEST "build unit test" ON)
 option(BUILD_MAIN "build main" ON)
 
-if(BUILD_V4L2_ENC_TEST OR BUILD_MAIN)
+if(BUILD_UNIT_TEST OR BUILD_MAIN)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
 endif()
 
-if(BUILD_ENC_TEST OR BUILD_V4L2_ENC_TEST OR BUILD_DMA_TEST OR BUILD_MAIN)
+if(BUILD_UNIT_TEST OR BUILD_MAIN)
     # find lib
     find_library(ROCKIT_LIB
         NAMES rockit librockit.so librockit.a
@@ -35,76 +29,28 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-if(BUILD_ENC_TEST)
-    # build enc test
+if(BUILD_UNIT_TEST)
+    # build unit args test
     add_executable(
-        enc_test
-        "tests/enc_test.c"
+        unit_args_test
+        "tests/unit_args_test.c"
+        "src/args.c"
     )
-    # link
-    target_link_libraries(enc_test PRIVATE
-        ${ROCKIT_LIB}
-        ${ROCKCHIP_MPP_LIB}
-        ${RGA_LIB}
-    )
-endif()
-
-if(BUILD_V4L2_TEST)
-    # build v4l2 test
-    add_executable(
-        v4l2_test
-        "tests/v4l2_test.c"
-    )
-endif()
-
-if(BUILD_V4L2_FMT_TEST)
-    # build v4l2 fmt test
-    add_executable(
-        v4l2_fmt_test
-        "tests/v4l2_fmt_test.c"
-    )
-endif()
-
-if(BUILD_V4L2_ENC_TEST)
-    # build unit v4l2 enc test
-    add_executable(
-        unit_v4l2_enc_test
-        "tests/unit_v4l2_enc_test.c"
-        "src/video.c"
-        "src/utils.c"
-    )
-    target_include_directories(unit_v4l2_enc_test PRIVATE
+    target_include_directories(unit_args_test PRIVATE
         ${PROJECT_SOURCE_DIR}/src
     )
-    target_link_libraries(unit_v4l2_enc_test PRIVATE
-        ${ROCKIT_LIB}
-        ${ROCKCHIP_MPP_LIB}
-        ${RGA_LIB}
-    )
 
+
+    # build unit utils test
     add_executable(
-        v4l2_enc_test
-        "tests/v4l2_enc_test.c"
+        unit_utils_test
+        "tests/unit_utils_test.c"
         "src/utils.c"
     )
-    target_include_directories(v4l2_enc_test PRIVATE
+    target_include_directories(unit_utils_test PRIVATE
         ${PROJECT_SOURCE_DIR}/src
     )
-    target_link_libraries(v4l2_enc_test PRIVATE
-        ${ROCKIT_LIB}
-        ${ROCKCHIP_MPP_LIB}
-        ${RGA_LIB}
-    )
-endif()
 
-if(BUILD_V4L2_QUERY_SIZE_TEST)
-    add_executable(
-        v4l2_query_size_test
-        "tests/v4l2_query_size_test.c"
-    )
-endif()
-
-if(BUILD_UNIT_SOCKET_TEST)
     # build unit socket test
     add_executable(
         unit_socket_test
@@ -115,14 +61,19 @@ if(BUILD_UNIT_SOCKET_TEST)
     target_include_directories(unit_socket_test PRIVATE
         ${PROJECT_SOURCE_DIR}/src
     )
-endif()
 
-if(BUILD_DMA_TEST)
+    # build unit video test
     add_executable(
-        dma_test
-        "tests/dma_test.c"
+        unit_video_test
+        "tests/unit_video_test.c"
+        "src/utils.c"
+        "src/video.c"
     )
-    target_link_libraries(dma_test PRIVATE
+    target_include_directories(unit_video_test PRIVATE
+        ${PROJECT_SOURCE_DIR}/src
+    )
+    # link
+    target_link_libraries(unit_video_test PRIVATE
         ${ROCKIT_LIB}
         ${ROCKCHIP_MPP_LIB}
         ${RGA_LIB}
