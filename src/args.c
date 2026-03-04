@@ -16,12 +16,12 @@ void print_help()
 {
     printf("Usage: -w <width> -h <height> -i <input path> -o <output path> -b <bit_rate> -g <gop>\n");
     printf("Required args:\n");
-    printf("    -w <pixel>   Must be greater than 0\n");
-    printf("    -h <pixel>   Must be greater than 0\n");
-    printf("    -i <path>    Input device path, eg. `/dev/video0`\n");
-    printf("    -o <path>    Output socket path, eg. `/var/run/capture.sock`\n");
-    printf("    -b <number>  Encoder bit rate, default is `10240`\n");
-    printf("    -g <number>  Encode group of pictures, default is `60`\n");
+    printf("-w <pixel>   Must be greater than 0\n");
+    printf("-h <pixel>   Must be greater than 0\n");
+    printf("-i <path>    Input device path, eg. `/dev/video0`\n");
+    printf("-o <path>    Output socket path, eg. `/var/run/capture.sock`\n");
+    printf("-b <number>  Encoder bit rate, default is `10240`\n");
+    printf("-g <number>  Encode group of pictures, default is `60`\n");
 }
 
 void print_version()
@@ -122,7 +122,8 @@ int parse_args(int argc, char *argv[], args_t *args)
             args->version_flag = true;
             break;
         default:
-            break;
+            printf("unknown option %s \n", opt);
+            return -1;
         }
     }
 
