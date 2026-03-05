@@ -122,7 +122,7 @@ int parse_args(int argc, char *argv[], args_t *args)
             args->version_flag = true;
             break;
         default:
-            printf("unknown option %s \n", opt);
+            printf("unknown option %c \n", opt);
             return -1;
         }
     }
