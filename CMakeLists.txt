@@ -85,6 +85,12 @@ if(BUILD_TEST)
         ${DRM_LIB}
     )
 
+    # build hardware video test
+    add_executable(
+        hw_video_test
+        "tests/hw_video_test.c"
+    )
+
     # build unit args test
     add_executable(
         unit_args_test
