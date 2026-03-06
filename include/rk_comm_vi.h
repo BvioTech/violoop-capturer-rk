@@ -147,6 +147,8 @@ typedef struct rkVI_DEV_ATTR_S {
     VI_HDR_MODE_E        enHdrMode;
     /* RW;Dev Set Crop size*/
     RECT_S              stCropRect;
+    /* RW; Dev Long Frame raw buffer wrap line */
+    RK_U32              u32LongFrameWrapLine;
 } VI_DEV_ATTR_S;
 
 /* The status of chn */
@@ -179,6 +181,50 @@ typedef enum rkVI_V4L2_CAPTURE_TYPE {
     /* Deprecated, do not use */
     VI_V4L2_CAPTURE_TYPE_PRIVATE              = 0x80,
 } VI_V4L2_CAPTURE_TYPE;
+
+
+/* vi mode type */
+typedef enum rkVI_MODTYPE_E {
+    VI_DEV_PIPE_MODE = 1,  /* DEV_PIPE_MODE */
+    VI_CHN_WRAP_MODE,      /* CHN_WRAP_MODE */
+    VI_BUTT
+} VI_MODTYPE_E;
+
+/* vi dev pipe mode type */
+typedef enum rkVI_DEV_PIPE_MODTYPE_E {
+    VI_DEV_PIPE_OFFLINE        = 1,  /* devx -> ddr -> pipex*/
+    VI_DEV_PIPE_ONLINE         = 2,  /* devx->pipex*/
+    VI_DEV_PIPE_LEFT_HALF_ONLINE    = 3,  /* dev0->pipe0, dev1->ddr->pipe1 */
+    VI_DEV_PIPE_RIGHT_HALF_ONLINE   = 4,  /* dev1->pipe1, dev0->ddr->pipe0 */
+    VI_DEV_PIPE_UNITE_HALF_ONLINE   = 5,  /* unite mode */
+    VI_DEV_PIPE_BUTT
+} VI_DEV_PIPE_MODTYPE_E;
+
+/* vi chn wrap mode type */
+typedef enum rkVI_CHN_WRAP_MODTYPE_E {
+    VI_CHN_WRAP_HARD        = 1,  /* vi venc use hardware wrap */
+    VI_CHN_WRAP_SOFT        = 2,  /* vi venc use software wrap */
+    VI_CHN_WRAP_BUTT
+} VI_CHN_WRAP_MODTYPE_E;
+
+/* the param of the device pipe mod */
+typedef struct rkVI_MOD_DEV_PIPE_S {
+    VI_DEV_PIPE_MODTYPE_E enDevPipeMode;    /* RW; device pipe work mode*/
+} VI_MOD_DEV_PIPE_S;
+
+/* the param of the chn wrap mod */
+typedef struct rkVI_MOD_CHN_WRAP_S {
+    VI_CHN_WRAP_MODTYPE_E enChnWrapMode;    /* RW; chan wrap mode*/
+} VI_MOD_CHN_WRAP_S;
+
+/* the param of the mod */
+typedef struct rVI_MODPARAM_S {
+    VI_MODTYPE_E enViModType;        /* RW; enViModType*/
+    union {
+        VI_MOD_DEV_PIPE_S  stDevPipeModParam;
+        VI_MOD_CHN_WRAP_S  stChnWrapModParam;
+    };
+} VI_PARAM_MOD_S;
 
 /* use for aiisp to get exposure param */
 typedef struct rkVIAIISP_EXP_PARAM {
@@ -293,18 +339,101 @@ typedef struct rkVI_CROP_INFO_S {
     RECT_S stCropRect;
 } VI_CROP_INFO_S;
 
-typedef enum _rkVILightType{
+/* User picture mode */
+typedef enum rk_VI_USERPIC_MODE_E {
+    VI_USERPIC_MODE_PIC = 0,
+    VI_USERPIC_MODE_BGC,
+    VI_USERPIC_MODE_BUTT,
+} VI_USERPIC_MODE_E;
+
+/* User picture background color */
+typedef struct rkVI_USERPIC_BGC_S {
+    RK_U32 u32BgColor;
+} VI_USERPIC_BGC_S;
+
+/* User picture attr */
+typedef struct rkVI_USERPIC_ATTR_S {
+    VI_USERPIC_MODE_E enUsrPicMode;
+    union {
+        VIDEO_FRAME_INFO_S stUsrPicFrm;
+        VI_USERPIC_BGC_S stUsrPicBg;
+    } unUsrPic;
+} VI_USERPIC_ATTR_S;
+
+typedef enum rkVI_CONNECT_STATE_E {
+    VI_CONNECT_STATE_UNKNOWN = 0,
+    VI_CONNECT_STATE_CONNECT,
+    VI_CONNECT_STATE_DISCONNECT,
+    VI_CONNECT_STATE_BUTT
+} VI_CONNECT_STATE_E;
+
+typedef struct rkVI_CONNECT_INFO_S {
+    RK_U32 u32Width;
+    RK_U32 u32Height;
+    RK_FLOAT f32FrameRate;
+    PIXEL_FORMAT_E enPixFmt;
+    VI_CONNECT_STATE_E enConnect;
+} VI_CONNECT_INFO_S;
+
+typedef struct rkVI_EDID_S {
+    RK_U32 u32Pad;
+    RK_U32 u32StartBlock;
+    RK_U32 u32Blocks;
+    RK_U32 au32Reserved[5];
+    RK_U8 *pu8Edid;
+} VI_EDID_S;
+
+typedef struct rkVI_STREAM_S {
+    MB_BLK  pMbBlk;
+    RK_U32  u32Len;
+    RK_U32  u32Seq;
+    RK_U64  u64PTS;
+} VI_STREAM_S;
+
+typedef enum rkVI_EVENT_E {
+    VI_EVENT_CONNECT_CHANGE = 1 << 0,
+    VI_EVENT_SOURCE_CHANGE = 1 << 1,
+} VI_EVENT_E;
+
+typedef struct rkVI_CB_INFO_S {
+    RK_U32 u32Event;
+} VI_CB_INFO_S;
+
+/** change event handling callback function */
+typedef void (*RK_VI_EventCallback)(RK_VOID *pPrivateData, VI_CB_INFO_S *pstInfo);
+
+typedef struct rkVI_EVENT_CALL_BACK_S {
+    RK_VI_EventCallback pfnCallback;
+    RK_VOID            *pPrivateData;
+} VI_EVENT_CALL_BACK_S;
+
+typedef enum _rkVI_LIGHT_TYPE{
     LIGHT_TYPE_PWM,
     LIGHT_TYPE_GPIO,
 } VI_LIGHT_TYPE_E;
 
-typedef struct rkVILightParam{
-    RK_U8  light_type;
-    RK_U8  light_enable;
-    RK_U64 duty_cycle;
-    RK_U64 period;
-    RK_U32 polarity;
+typedef struct rkVI_LIGHT_PARAM {
+    RK_U8  u8LightType;
+    RK_U8  u8LightEnable;
+    RK_U64 u64DutyCycle;
+    RK_U64 u64Period;
+    RK_U32 u32Polarity;
 } VI_LIGHT_CTL_PARAM_S;
+
+typedef enum rkVI_SENSOR_MODE {
+    SENSOR_NO_HDR = 0,
+    SENSOR_HDR_X2 = 5,
+    SENSOR_HDR_X3 = 6,
+    SENSOR_HDR_COMPR,
+} VI_SENSOR_MODE_E;
+
+typedef struct rkVI_SENSOR_SETTING {
+    RK_U32 u32SensorWidth;                // width of resolution
+    RK_U32 u32SensorHeight;               // height of resolution
+    RK_U32 u32SensorFps;                  // 120 / 60 / 30
+    PIXEL_FORMAT_E enSensorFmt;           // RK_FMT_*
+    VI_SENSOR_MODE_E enSensorMode;        // linear / hdr2x / hdr3x
+} VI_SENSOR_SETTING_S;
 
 #define RK_ERR_VI_INVALID_PARA        RK_DEF_ERR(RK_ID_VI, RK_ERR_LEVEL_ERROR, RK_ERR_ILLEGAL_PARAM)
 #define RK_ERR_VI_INVALID_DEVID       RK_DEF_ERR(RK_ID_VI, RK_ERR_LEVEL_ERROR, RK_ERR_INVALID_DEVID)

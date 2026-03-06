@@ -30,10 +30,10 @@ typedef enum rkMB_UID_E {
 #define MB_INVALID_POOLID              (-1U)
 #define MB_INVALID_HANDLE              NULL
 
-#define MB_MAX_COMM_POOLS              16
+#define MB_MAX_COMM_POOLS              128
 #define MB_MAX_MOD_COMM_POOLS          16
 
-#define MB_MAX_COUNT                   10240
+#define MB_MAX_COUNT                   1024
 
 /* Generall common pool use this owner id, module common pool use VB_UID as owner id */
 #define POOL_OWNER_COMMON              -1
@@ -79,6 +79,7 @@ typedef struct rkMB_POOL_CONFIG_S {
     MB_DMA_TYPE_E enDmaType;
     RK_BOOL bPreAlloc;
     RK_BOOL bNotDelete;
+    RK_U64 u64Uuid;
 } MB_POOL_CONFIG_S;
 
 typedef struct rkMB_CONFIG_S {

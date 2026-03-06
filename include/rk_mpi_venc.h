@@ -14,6 +14,8 @@ extern "C" {
 #endif
 #endif /* __cplusplus */
 
+RK_S32 RK_MPI_VENC_SetModParam(const VENC_PARAM_MOD_S *pstModParam);
+RK_S32 RK_MPI_VENC_GetModParam(VENC_PARAM_MOD_S *pstModParam);
 RK_S32 RK_MPI_VENC_CreateChn(VENC_CHN VeChn, const VENC_CHN_ATTR_S *pstAttr);
 RK_S32 RK_MPI_VENC_DestroyChn(VENC_CHN VeChn);
 RK_S32 RK_MPI_VENC_ResetChn(VENC_CHN VeChn);
@@ -25,6 +27,7 @@ RK_S32 RK_MPI_VENC_QueryStatus(VENC_CHN VeChn, VENC_CHN_STATUS_S *pstStatus);
 RK_S32 RK_MPI_VENC_EnableSvc(VENC_CHN VeChn, RK_BOOL bEnable);
 RK_S32 RK_MPI_VENC_EnableMotionDeblur(VENC_CHN VeChn, RK_BOOL bEnable);
 RK_S32 RK_MPI_VENC_EnableMotionStaticSwitch(VENC_CHN VeChn, RK_BOOL bEnable);
+RK_S32 RK_MPI_VENC_EnableTmvp(VENC_CHN VeChn, RK_BOOL bEnable);
 RK_S32 RK_MPI_VENC_SetChnAttr(VENC_CHN VeChn, const VENC_CHN_ATTR_S *pstChnAttr);
 RK_S32 RK_MPI_VENC_GetChnAttr(VENC_CHN VeChn, VENC_CHN_ATTR_S *pstChnAttr);
 RK_S32 RK_MPI_VENC_SetChnBufWrapAttr(VENC_CHN VeChn, const VENC_CHN_BUF_WRAP_S *pstVencChnBufWrap);
@@ -43,12 +46,15 @@ RK_S32 RK_MPI_VENC_SendFrameEx(VENC_CHN VeChn, const USER_FRAME_INFO_S *pstFrame
 RK_S32 RK_MPI_VENC_GetStream(VENC_CHN VeChn, VENC_STREAM_S *pstStream, RK_S32 s32MilliSec);
 RK_S32 RK_MPI_VENC_ReleaseStream(VENC_CHN VeChn, VENC_STREAM_S *pstStream);
 RK_S32 RK_MPI_VENC_RequestIDR(VENC_CHN VeChn, RK_BOOL bInstant);
+RK_S32 RK_MPI_VENC_RequestPskip(VENC_CHN VeChn, RK_S32 s32Num, RK_S32 s32Interval);
 RK_S32 RK_MPI_VENC_SetRoiAttr(VENC_CHN VeChn, const VENC_ROI_ATTR_S *pstRoiAttr);
 RK_S32 RK_MPI_VENC_GetRoiAttr(VENC_CHN VeChn, RK_U32 u32Index, VENC_ROI_ATTR_S *pstRoiAttr);
 RK_S32 RK_MPI_VENC_SetRcParam(VENC_CHN VeChn, const VENC_RC_PARAM_S *pstRcParam);
 RK_S32 RK_MPI_VENC_GetRcParam(VENC_CHN VeChn, VENC_RC_PARAM_S *pstRcParam);
 RK_S32 RK_MPI_VENC_SetRcParam2(VENC_CHN VeChn, const VENC_RC_PARAM2_S *pstRcParam2);
 RK_S32 RK_MPI_VENC_GetRcParam2(VENC_CHN VeChn, VENC_RC_PARAM2_S *pstRcParam2);
+RK_S32 RK_MPI_VENC_SetRcParam3(VENC_CHN VeChn, const VENC_RC_PARAM3_S *pstRcParam3);
+RK_S32 RK_MPI_VENC_GetRcParam3(VENC_CHN VeChn, VENC_RC_PARAM3_S *pstRcParam3);
 RK_S32 RK_MPI_VENC_SetRcAdvParam(VENC_CHN VeChn, const VENC_RC_ADVPARAM_S *pstRcAdvParam);
 RK_S32 RK_MPI_VENC_GetRcAdvParam(VENC_CHN VeChn, VENC_RC_ADVPARAM_S *pstRcAdvParam);
 RK_S32 RK_MPI_VENC_SetFrameLostStrategy(VENC_CHN VeChn, const VENC_FRAMELOST_S *pstFrmLostParam);
@@ -59,6 +65,10 @@ RK_S32 RK_MPI_VENC_SetIntraRefresh(VENC_CHN VeChn, const VENC_INTRA_REFRESH_S *p
 RK_S32 RK_MPI_VENC_GetIntraRefresh(VENC_CHN VeChn, VENC_INTRA_REFRESH_S *pstIntraRefresh);
 RK_S32 RK_MPI_VENC_SetHierarchicalQp(VENC_CHN VeChn, const VENC_HIERARCHICAL_QP_S *pstHierarchicalQp);
 RK_S32 RK_MPI_VENC_GetHierarchicalQp(VENC_CHN VeChn, VENC_HIERARCHICAL_QP_S *pstHierarchicalQp);
+RK_S32 RK_MPI_VENC_SetCuPrediction(VENC_CHN VeChn, const VENC_CU_PREDICTION_S *pstCuPrediction);
+RK_S32 RK_MPI_VENC_GetCuPrediction(VENC_CHN VeChn, VENC_CU_PREDICTION_S *pstCuPrediction);
+RK_S32 RK_MPI_VENC_SetSkipBias(VENC_CHN VeChn, const VENC_SKIP_BIAS_S *pstSkipBias);
+RK_S32 RK_MPI_VENC_GetSkipBias(VENC_CHN VeChn, VENC_SKIP_BIAS_S *pstSkipBias);
 RK_S32 RK_MPI_VENC_SetDeBreathEffect(VENC_CHN VeChn, const VENC_DEBREATHEFFECT_S *pstDeBreathEffect);
 RK_S32 RK_MPI_VENC_GetDeBreathEffect(VENC_CHN VeChn, VENC_DEBREATHEFFECT_S *pstDeBreathEffect);
 RK_S32 RK_MPI_VENC_SetJpegParam(VENC_CHN VeChn, const VENC_JPEG_PARAM_S *pstJpegParam);
@@ -84,6 +94,12 @@ RK_S32 RK_MPI_VENC_SetAntiLine(VENC_CHN VeChn, const VENC_ANTI_LINE_S *pstAntiLi
 RK_S32 RK_MPI_VENC_GetAntiLine(VENC_CHN VeChn, VENC_ANTI_LINE_S *pstAntiLine);
 RK_S32 RK_MPI_VENC_SetLambda(VENC_CHN VeChn, const VENC_LAMBDA_S *pstLambda);
 RK_S32 RK_MPI_VENC_GetLambda(VENC_CHN VeChn, VENC_LAMBDA_S *pstLambda);
+RK_S32 RK_MPI_VENC_SetStaticWeight(VENC_CHN VeChn, const VENC_STATIC_WEIGHT_S *pstStaticWeight);
+RK_S32 RK_MPI_VENC_GetStaticWeight(VENC_CHN VeChn, VENC_STATIC_WEIGHT_S *pstStaticWeight);
+RK_S32 RK_MPI_VENC_SetLightChange(VENC_CHN VeChn, const VENC_LIGHT_CHANGE_S *pstLightChange);
+RK_S32 RK_MPI_VENC_GetLightChange(VENC_CHN VeChn, VENC_LIGHT_CHANGE_S *pstLightChange);
+RK_S32 RK_MPI_VENC_SetAntiFlick(VENC_CHN VeChn, const VENC_ANTI_FLICK_S *pstAntiFlick);
+RK_S32 RK_MPI_VENC_GetAntiFlick(VENC_CHN VeChn, VENC_ANTI_FLICK_S *pstAntiFlick);
 
 // H264
 RK_S32 RK_MPI_VENC_SetH264IntraPred(VENC_CHN VeChn, const VENC_H264_INTRA_PRED_S *pstH264IntraPred);
@@ -98,6 +114,8 @@ RK_S32 RK_MPI_VENC_SetH264Vui(VENC_CHN VeChn, const VENC_H264_VUI_S *pstH264Vui)
 RK_S32 RK_MPI_VENC_GetH264Vui(VENC_CHN VeChn, VENC_H264_VUI_S *pstH264Vui);
 RK_S32 RK_MPI_VENC_SetH264Qbias(VENC_CHN VeChn, const VENC_H264_QBIAS_S *pstQbias);
 RK_S32 RK_MPI_VENC_GetH264Qbias(VENC_CHN VeChn, VENC_H264_QBIAS_S *pstQbias);
+RK_S32 RK_MPI_VENC_SetH264Qbias2(VENC_CHN VeChn, const VENC_H264_QBIAS2_S *pstQbias);
+RK_S32 RK_MPI_VENC_GetH264Qbias2(VENC_CHN VeChn, VENC_H264_QBIAS2_S *pstQbias);
 
 // H265
 RK_S32 RK_MPI_VENC_SetH265Trans(VENC_CHN VeChn, const VENC_H265_TRANS_S *pstH265Trans);
@@ -114,6 +132,14 @@ RK_S32 RK_MPI_VENC_SetH265Vui(VENC_CHN VeChn, const VENC_H265_VUI_S *pstH265Vui)
 RK_S32 RK_MPI_VENC_GetH265Vui(VENC_CHN VeChn, VENC_H265_VUI_S *pstH265Vui);
 RK_S32 RK_MPI_VENC_SetH265Qbias(VENC_CHN VeChn, const VENC_H265_QBIAS_S *pstQbias);
 RK_S32 RK_MPI_VENC_GetH265Qbias(VENC_CHN VeChn, VENC_H265_QBIAS_S *pstQbias);
+
+// H264&H265 common
+RK_S32 RK_MPI_VENC_SetRefParam(VENC_CHN VeChn, const VENC_REF_PARAM_S *pstRefParam);
+RK_S32 RK_MPI_VENC_GetRefParam(VENC_CHN VeChn, VENC_REF_PARAM_S *pstRefParam);
+RK_S32 RK_MPI_VENC_SetH265Qbias(VENC_CHN VeChn, const VENC_H265_QBIAS_S *pstQbias);
+RK_S32 RK_MPI_VENC_GetH265Qbias(VENC_CHN VeChn, VENC_H265_QBIAS_S *pstQbias);
+RK_S32 RK_MPI_VENC_SetH265Qbias2(VENC_CHN VeChn, const VENC_H265_QBIAS2_S *pstQbias);
+RK_S32 RK_MPI_VENC_GetH265Qbias2(VENC_CHN VeChn, VENC_H265_QBIAS2_S *pstQbias);
 RK_S32 RK_MPI_VENC_SetH265CuDqp(VENC_CHN VeChn, const VENC_H265_CU_DQP_S *pstCuDqp);
 RK_S32 RK_MPI_VENC_GetH265CuDqp(VENC_CHN VeChn, VENC_H265_CU_DQP_S *pstCuDqp);
 

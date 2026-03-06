@@ -1,5 +1,5 @@
 /* GPL-2.0 WITH Linux-syscall-note OR Apache 2.0 */
-/* Copyright (c) 2023 Fuzhou Rockchip Electronics Co., Ltd */
+/* Copyright (c) 2021 Fuzhou Rockchip Electronics Co., Ltd */
 
 #ifndef INCLUDE_RT_MPI_RK_COMMON_VPSS_H_
 #define INCLUDE_RT_MPI_RK_COMMON_VPSS_H_
@@ -9,7 +9,6 @@
 #include "rk_common.h"
 #include "rk_errno.h"
 #include "rk_comm_video.h"
-#include "rk_comm_aiisp.h"
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -41,6 +40,10 @@ extern "C" {
 #define VPSS_CHN3                    3
 #define VPSS_INVALID_CHN             -1
 
+typedef struct rkVPSS_MOD_PARAM_S {
+    MB_SOURCE_E enVpssMBSource;
+} VPSS_MOD_PARAM_S;
+
 typedef struct rkVPSS_GRP_ATTR_S {
     RK_U32                     u32MaxW;           /* RW; Range: [64, 16384]; Width of source image. */
     RK_U32                     u32MaxH;           /* RW; Range: [64, 16384]; Height of source image. */
@@ -48,6 +51,9 @@ typedef struct rkVPSS_GRP_ATTR_S {
     DYNAMIC_RANGE_E            enDynamicRange;    /* RW; DynamicRange of source image. */
     FRAME_RATE_CTRL_S          stFrameRate;       /* Grp frame rate contrl. */
     COMPRESS_MODE_E            enCompressMode;    /* RW; Reference frame compress mode */
+    RK_U32                     u32MaxQueue;       /* RW; Grp Max input queue length */
+    RK_U32                     u32UseChnCnt;      /* Number of channels used, cannot be greater than VPSS_MAX_CHN_NUM */
+    RK_U32                     u32ChnMap[VPSS_MAX_CHN_NUM];
 } VPSS_GRP_ATTR_S;
 
 typedef enum rkVPSS_CHN_MODE_E {

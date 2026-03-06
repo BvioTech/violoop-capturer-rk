@@ -76,6 +76,7 @@ typedef enum rkAVS_MODE_E {
     * */
     AVS_MODE_NOBLEND_QR   = 3,
     AVS_MODE_NOBLEND_OVL  = 4,
+    AVS_MODE_BLEND_DYN    = 5,
 
     AVS_MODE_BUTT
 } AVS_MODE_E;
@@ -198,6 +199,11 @@ typedef struct rkAVS_MOD_PARAM_S {
     RK_U32 u32WorkingSetSize;               /* RW; AVS work */
     MB_SOURCE_E enMBSource;                 /* RW; AVS MB pool source type */
 } AVS_MOD_PARAM_S;
+
+typedef struct rkAVS_ROI_PARAM_S {
+    RK_BOOL      bEnable;        /* RW; Range: [0, 1]; enable. */
+    RECT_S       stRect;         /* Regin of Interest */
+} AVS_ROI_PARAM_S;
 
 #define RK_AVS_OK                   RK_SUCCESS
 #define RK_ERR_AVS_NULL_PTR         RK_DEF_ERR(RK_ID_AVS, RK_ERR_LEVEL_ERROR, RK_ERR_NULL_PTR)

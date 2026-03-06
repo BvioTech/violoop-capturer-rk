@@ -92,12 +92,17 @@ typedef struct rkIVS_OD_INFO_S {
     RK_U32 frameId;          /* 所在帧序号 */
     RK_U32 u32Flag;
     RK_U32 u32PixSum;
+    RK_CHAR *pData;
+    RK_U32 u32Size;
+    RK_S32 s32Fd;
 } IVS_OD_INFO_S;
 
 typedef struct rkIVS_OD_ATTR_S {
     RK_S32  s32ODPercent; // [5, 8]
     RK_BOOL bODUserRectEnable;
     RECT_S  stODUserRect;
+    RK_S32  s32ThreshComplexCnt; // [0, 4]
+    RK_S32  s32ThreshSad; // [0, 16383]
 } IVS_OD_ATTR_S;
 
 typedef struct rkIVS_RESULT_S {

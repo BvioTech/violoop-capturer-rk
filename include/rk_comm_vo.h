@@ -155,6 +155,7 @@ typedef enum rkVO_INTF_SYNC_E {
 
     VO_OUTPUT_576P50, /* 720  x  576 at 50 Hz. */
     VO_OUTPUT_480P60, /* 720  x  480 at 60 Hz. */
+    VO_OUTPUT_1280P60, /* 720  x  1280 at 60 Hz. */
 
     VO_OUTPUT_800x600_60, /* VESA 800 x 600 at 60 Hz (non-interlaced) */
     VO_OUTPUT_1024x768_60, /* VESA 1024 x 768 at 60 Hz (non-interlaced) */
@@ -190,6 +191,7 @@ typedef enum rkVO_INTF_SYNC_E {
     VO_OUTPUT_7680x4320_60, /* 7680x4320_60 */
 
     VO_OUTPUT_3840x1080_60, /* For split mode */
+    VO_OUTPUT_1080P120, /* 1920x1080_120 */
 
     VO_OUTPUT_USER, /* User timing. */
     VO_OUTPUT_DEFAULT,
@@ -233,7 +235,8 @@ typedef struct rkVO_CHN_ATTR_S {
     RK_BOOL bEnKeyColor;/* Enable key color or not when pixel format BGRA5551/RGBA5551 */
     RK_U32 u32KeyColor; /* Key color value of pixel format BGRA5551/RGBA5551, B[0:4] G[5:9] R[10:14] */
     MIRROR_E enMirror; /* RW, Mirror */
-    ROTATION_E enRotation; /* RW, rotation. */
+    ROTATION_E enRotation;    /* RW, rotation. */
+    RK_U32 u32MaxChnQueue;    /* vo channel max queue length */
 } VO_CHN_ATTR_S;
 
 typedef struct rkVO_CHN_PARAM_S {
@@ -274,7 +277,7 @@ typedef struct rkVO_SYNC_INFO_S {
     RK_BOOL bIvs; /* RW; polarity of vertical synch signal, 0: negative, 1: positive */
 
     RK_U16 u16FrameRate; /* RW; frame rate of output */
-    RK_U16 u16PixClock; /* RW; pixel clock, the unit is KHZ */
+    RK_U32 u32PixClock; /* RW; pixel clock, the unit is KHZ */
 } VO_SYNC_INFO_S;
 
 typedef struct rkVO_PUB_ATTR_S {
@@ -317,6 +320,7 @@ typedef enum rkVO_WBC_SOURCE_TYPE_E {
     VO_WBC_SOURCE_DEV = 0x0, /* WBC source is device */
     VO_WBC_SOURCE_VIDEO = 0x1, /* WBC source is video layer */
     VO_WBC_SOURCE_GRAPHIC = 0x2, /* WBC source is graphic layer. Warning: not supported */
+    VO_WBC_SOURCE_VIRTUAL = 0x3, /* WBC source is virtual layer */
     VO_WBC_SOURCE_BUTT
 } VO_WBC_SOURCE_TYPE_E;
 
@@ -338,8 +342,9 @@ typedef enum rkVO_SPLICE_MODE_E {
 
 typedef enum rkVO_LAYER_MODE_E {
     VO_LAYER_MODE_CURSOR = 0,
-    VO_LAYER_MODE_GRAPHIC = 1,
-    VO_LAYER_MODE_VIDEO = 2,
+    VO_LAYER_MODE_GRAPHIC,
+    VO_LAYER_MODE_VIDEO,
+    VO_LAYER_MODE_VIRTUAL,
     VO_LAYER_MODE_BUTT
 } VO_LAYER_MODE_E;
 
@@ -348,7 +353,8 @@ typedef struct rkVO_VIDEO_LAYER_ATTR_S {
     SIZE_S stImageSize; /* RW; Canvas size of the video layer */
     RK_U32 u32DispFrmRt; /* RW; Display frame rate */
     PIXEL_FORMAT_E enPixFormat; /* RW; Pixel format of the video layer */
-    RK_BOOL bDoubleFrame; /* RW; Whether to double frames */
+    RK_BOOL bBypassFrame; /* RW; Whether to bypass frame to video layer */
+    RK_BOOL bLowDelay; /* RW; Whether start composer at once when channel 0 recive buffer */
     COMPRESS_MODE_E enCompressMode; /* RW; Video Layer output compress mode */
     DYNAMIC_RANGE_E enDstDynamicRange; /* RW; Video Layer output dynamic range type */
 } VO_VIDEO_LAYER_ATTR_S;
@@ -482,6 +488,12 @@ typedef struct rk_VO_SINK_CAPABILITY_S {
     RK_BOOL             bSupportHDMI;
 } VO_SINK_CAPABILITY_S;
 
+typedef struct rk_VO_CB_INFO_S {
+    RK_U32 u32Id;
+    RK_U32 u32Sec;
+    RK_U32 u32Usec;
+} VO_CB_INFO_S;
+
 /** hpd event handling callback function */
 typedef void (*RK_VO_CallBack)(RK_VOID *pPrivateData);
 
@@ -489,6 +501,14 @@ typedef struct rk_VO_CALLBACK_FUNC_S {
     RK_VO_CallBack      pfnEventCallback;
     RK_VOID             *pPrivateData;
 } RK_VO_CALLBACK_FUNC_S;
+
+/** vsync event handling callback function */
+typedef void (*RK_VO_VsyncCallBack)(RK_VOID *pPrivateData, VO_CB_INFO_S* info);
+
+typedef struct rk_VO_VSYNC_CALLBACK_FUNC_S {
+    RK_VO_VsyncCallBack pfnEventCallback;
+    RK_VOID             *pPrivateData;
+} RK_VO_VSYNC_CALLBACK_FUNC_S;
 
 typedef enum rkVO_GFX_MODE_E {
     VO_MODE_NORMAL,
@@ -522,6 +542,34 @@ typedef struct rk_VO_HDMI_PARAM_S {
     VO_HDMI_COLOR_FMT_E enColorFmt;
     VO_HDMI_QUANT_RANGE_E enQuantRange; /* Effective in enColorFmt == RGB mode */
 } VO_HDMI_PARAM_S;
+
+typedef enum rk356X_VO_LAYER_NAME_E {
+    RK356X_VOP_LAYER_CLUSTER0 = 0,
+    RK356X_VOP_LAYER_CLUSTER1 = 2,
+    RK356X_VOP_LAYER_ESMART0  = 4,
+    RK356X_VOP_LAYER_ESMART1,
+    RK356X_VOP_LAYER_SMART0,
+    RK356X_VOP_LAYER_SMART1,
+} VO_LAYER_NAME_RK356X_E;
+
+typedef enum rkVOP2_LAYER_NAME_E {
+    VO_LAYER_CLUSTER0 = 0,
+    VO_LAYER_CLUSTER1,
+    VO_LAYER_CLUSTER2,
+    VO_LAYER_CLUSTER3,
+    VO_LAYER_ESMART0,
+    VO_LAYER_ESMART1,
+    VO_LAYER_ESMART2,
+    VO_LAYER_ESMART3,
+    VO_LAYER_BUTT
+} VO_LAYER_NAME_E;
+
+typedef enum rkVO_VIR_LAYER_NAME_E {
+    VO_LAYER_VIRTUAL0 = VO_LAYER_BUTT,
+    VO_LAYER_VIRTUAL1,
+    VO_LAYER_VIRTUAL2,
+    VO_LAYER_VIRTUAL3,
+} VO_VIR_LAYER_NAME_E;
 
 #ifdef __cplusplus
 #if __cplusplus

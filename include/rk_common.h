@@ -26,6 +26,7 @@ extern "C" {
 #define VERSION_NAME_MAXLEN 64
 
 #define RK_MAX(a, b)           ((a) > (b) ? (a) : (b))
+#define RK_MIN(a, b)           ((a) > (b) ? (b) : (a))
 typedef struct rkMPP_VERSION_S {
     RK_CHAR aVersion[VERSION_NAME_MAXLEN];
 } MPP_VERSION_S;
@@ -106,12 +107,14 @@ typedef enum rkMOD_ID_E {
     RK_ID_ISP     = 15,
     RK_ID_WBC     = 16,
     RK_ID_AVS     = 17,
-    RK_ID_RGA     = 18,
-    RK_ID_AF      = 19,
-    RK_ID_IVS     = 20,
-    RK_ID_GPU     = 21,
-    RK_ID_NN      = 22,
-    RK_ID_AIISP   = 23,
+    RK_ID_GDC     = 18,
+    RK_ID_RGA     = 19,
+    RK_ID_AF      = 20,
+    RK_ID_IVS     = 21,
+    RK_ID_PVS     = 22,
+    RK_ID_DIS     = 23,
+    RK_ID_SWCAC   = 24,
+    RK_ID_AIISP   = 25,
 
     RK_ID_BUTT,
 } MOD_ID_E;
@@ -141,11 +144,13 @@ typedef struct rkMPP_CHN_S {
 #define RK_MOD_ISP       "isp"
 #define RK_MOD_WBC       "wbc"
 #define RK_MOD_AVS       "avs"
+#define RK_MOD_GDC       "gdc"
 #define RK_MOD_RGA       "rga"
 #define RK_MOD_AF        "af"
 #define RK_MOD_IVS       "ivs"
-#define RK_MOD_GPU       "gpu"
-#define RK_MOD_NN        "nn"
+#define RK_MOD_PVS       "pvs"
+#define RK_MOD_DIS       "dis"
+#define RK_MOD_SWCAC     "cac"
 #define RK_MOD_AIISP     "aiisp"
 
 typedef enum rkCODEC_ID_E {
@@ -171,6 +176,7 @@ typedef enum rkCODEC_ID_E {
      RK_VIDEO_ID_VP6,
      RK_VIDEO_ID_AVSPLUS,            /**< AVS+ profile=0x48 */
      RK_VIDEO_ID_AVS,                /**< AVS  profile=0x20 */
+     RK_VIDEO_ID_AV1,
      /* *< Reserved region for introducing Khronos Standard Extensions */
      RK_VIDEO_ID_KhronosExtensions = 0x2F000000,
      /* *< Reserved region for introducing Vendor Extensions */
@@ -233,7 +239,7 @@ typedef enum rkCODEC_ID_E {
      RK_AUDIO_CodingMax = 0x7FFFFFFF,
 
      /* subtitle codecs */
-     RK_SUB_ID_Unused = 0x17000,          ///< A dummy ID pointing at the start of subtitle codecs.
+     RK_SUB_ID_Unused = 0x80000000,    ///< A dummy ID pointing at the start of subtitle codecs.
      RK_SUB_ID_DVD,
      RK_SUB_ID_DVB,
      RK_SUB_ID_TEXT,  ///< raw UTF-8 text
@@ -244,7 +250,7 @@ typedef enum rkCODEC_ID_E {
      RK_SUB_ID_DVB_TELETEXT,
      RK_SUB_ID_SRT,
 
-     RK_SUB_ID_MICRODVD   = 0x17800,
+     RK_SUB_ID_MICRODVD = 0x80000800,
      RK_SUB_ID_EIA_608,
      RK_SUB_ID_JACOSUB,
      RK_SUB_ID_SAMI,
@@ -261,6 +267,16 @@ typedef enum rkCODEC_ID_E {
      RK_SUB_ID_HDMV_TEXT,
      RK_SUB_CodingMax
 } RK_CODEC_ID_E;
+
+typedef enum rkDEVICE_ID_E {
+    RK_DID_ISP    = 0,
+    RK_DID_GPU    = 1,
+    RK_DID_RGA2   = 2,
+    RK_DID_RGA3   = 3,
+    RK_DID_VENC   = 4,
+
+    RK_DID_BUTT,
+} DEVICE_ID_E;
 
 #ifdef __cplusplus
 #if __cplusplus

@@ -1,5 +1,5 @@
 /* GPL-2.0 WITH Linux-syscall-note OR Apache 2.0 */
-/* Copyright (c) 2023 Fuzhou Rockchip Electronics Co., Ltd */
+/* Copyright (c) 2021 Fuzhou Rockchip Electronics Co., Ltd */
 
 
 #ifndef INCLUDE_RT_MPI_RK_MPI_AVS_H_
@@ -24,6 +24,10 @@ RK_S32 RK_MPI_AVS_StopGrp(AVS_GRP AVSGrp);
 RK_S32 RK_MPI_AVS_ResetGrp(AVS_GRP AVSGrp);
 RK_S32 RK_MPI_AVS_GetGrpAttr(AVS_GRP AVSGrp, AVS_GRP_ATTR_S *pstGrpAttr);
 RK_S32 RK_MPI_AVS_SetGrpAttr(AVS_GRP AVSGrp, const AVS_GRP_ATTR_S *pstGrpAttr);
+RK_S32 RK_MPI_AVS_GetGrpRoi(AVS_GRP AVSGrp, AVS_ROI_PARAM_S *pstRoiParam);
+RK_S32 RK_MPI_AVS_SetGrpRoi(AVS_GRP AVSGrp, const AVS_ROI_PARAM_S *pstRoiParam);
+RK_S32 RK_MPI_AVS_SetGrpRotation(AVS_GRP AVSGrp, ROTATION_E enRotation);
+RK_S32 RK_MPI_AVS_GetGrpRotation(AVS_GRP AVSGrp, ROTATION_E *penRotation);
 
 /* Pipe Settings */
 RK_S32 RK_MPI_AVS_SetPipeAttr(AVS_GRP AVSGrp, AVS_PIPE AVSPipe, const AVS_PIPE_ATTR_S *pstPipeAttr);

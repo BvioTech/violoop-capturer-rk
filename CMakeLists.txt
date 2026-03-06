@@ -66,6 +66,25 @@ include_directories(
 )
 
 if(BUILD_TEST)
+    # build hardware venc test
+    add_executable(
+        hw_venc_test
+        "tests/hw_venc_test.c"
+    )
+    # link
+    target_link_libraries(hw_venc_test PRIVATE
+        ${ROCKIT_LIB}
+        ${ROCKCHIP_MPP_LIB}
+        ${RGA_LIB}
+        ${MALI_LIB}
+        ${ALSA_LIB}
+        ${XCB_LIB}
+        ${XCB_DRI2_LIB}
+        ${WAYLAND_CLIENT_LIB}
+        ${X11_LIB}
+        ${DRM_LIB}
+    )
+
     # build unit args test
     add_executable(
         unit_args_test
