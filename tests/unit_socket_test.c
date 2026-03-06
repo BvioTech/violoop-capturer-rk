@@ -24,7 +24,7 @@ static volatile int keep_running = 1;
 /**
  * stop running
  */
-void stop_running()
+void stop_running(int)
 {
     keep_running = 0;
 }
@@ -92,7 +92,7 @@ int main()
         int ret = send_frame(fd, frame_id, get_time_us(), VIDEO_WIDTH, VIDEO_HEIGHT, buffer, size);
         if (ret == -1)
         {
-            stop_running();
+            stop_running(0);
         }
         else
         {

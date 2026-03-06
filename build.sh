@@ -3,8 +3,8 @@ build_rv1106(){
     docker run -it --rm -v .:/app builder:luckfox-pico /app/build_rv1106.sh
 }
 
-build_rk3575(){
-    ./build_rk3576.sh
+build_rk3576(){
+    docker run -it --rm -v .:/app builder:firefly /app/build_rk3576.sh
 }
 
 if [ $# -eq 0 ]; then
@@ -16,7 +16,7 @@ elif [ $# -eq 1 ]; then
             build_rv1106
             ;;
 		"rk3576")
-            build_rk3575
+            build_rk3576
             ;;
         *)
             echo "Unknown args"

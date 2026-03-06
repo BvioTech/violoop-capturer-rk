@@ -1,26 +1,62 @@
 cmake_minimum_required(VERSION 3.22)
 project(video C)
 
-option(BUILD_UNIT_TEST "build unit test" ON)
+option(BUILD_TEST "build test" ON)
 option(BUILD_MAIN "build main" ON)
 
-if(BUILD_UNIT_TEST OR BUILD_MAIN)
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
+if(BUILD_TEST OR BUILD_MAIN)
+    # set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
-endif()
 
-if(BUILD_UNIT_TEST OR BUILD_MAIN)
     # find lib
+    find_library(ALSA_LIB
+        NAMES libasound.so.2
+        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
+        REQUIRED
+    )
+    find_library(XCB_LIB
+        NAMES libxcb.so
+        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
+        REQUIRED
+    )
+    find_library(XCB_DRI2_LIB
+        NAMES libxcb-dri2.so.0
+        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
+        REQUIRED
+    )
+    find_library(WAYLAND_CLIENT_LIB
+        NAMES libwayland-client.so
+        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
+        REQUIRED
+    )
+    find_library(X11_LIB
+        NAMES libX11.so
+        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
+        REQUIRED
+    )
+    find_library(DRM_LIB
+        NAMES libdrm.so
+        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
+        REQUIRED
+    )
+
+    find_library(MALI_LIB
+        NAMES libmali.so.1
+        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
+        REQUIRED
+    )
+
     find_library(ROCKIT_LIB
-        NAMES rockit librockit.so librockit.a
+        NAMES librockit.so
         REQUIRED
     )
     find_library(ROCKCHIP_MPP_LIB
-        NAMES mpp librockchip_mpp.so librockchip_mpp.a librockchip_mpp.so.0 librockchip_mpp.1
+        NAMES librockchip_mpp.so
         REQUIRED
     )
     find_library(RGA_LIB
-        NAMES rga librga.so librga.a
+        NAMES librga.so
+        PATHS ${SYSROOT_PATH}/usr/local/lib/aarch64-linux-gnu
         REQUIRED
     )
 endif()
@@ -29,7 +65,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-if(BUILD_UNIT_TEST)
+if(BUILD_TEST)
     # build unit args test
     add_executable(
         unit_args_test
@@ -39,7 +75,6 @@ if(BUILD_UNIT_TEST)
     target_include_directories(unit_args_test PRIVATE
         ${PROJECT_SOURCE_DIR}/src
     )
-
 
     # build unit utils test
     add_executable(
@@ -77,6 +112,14 @@ if(BUILD_UNIT_TEST)
         ${ROCKIT_LIB}
         ${ROCKCHIP_MPP_LIB}
         ${RGA_LIB}
+        ${MALI_LIB}
+        ${ALSA_LIB}
+        ${XCB_LIB}
+        ${XCB_DRI2_LIB}
+        ${WAYLAND_CLIENT_LIB}
+        ${X11_LIB}
+        ${DRM_LIB}
+        Threads::Threads
     )
 endif()
 
@@ -124,5 +167,13 @@ if(BUILD_MAIN)
         ${ROCKIT_LIB}
         ${ROCKCHIP_MPP_LIB}
         ${RGA_LIB}
+        ${MALI_LIB}
+        ${ALSA_LIB}
+        ${XCB_LIB}
+        ${XCB_DRI2_LIB}
+        ${WAYLAND_CLIENT_LIB}
+        ${X11_LIB}
+        ${DRM_LIB}
+        Threads::Threads
     )
 endif()

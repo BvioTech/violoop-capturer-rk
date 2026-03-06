@@ -16,25 +16,31 @@ jobs:
       - name: Download and setup toolchain for arm-rockchip830-linux-uclibcgnueabihf
         env:
           TOOLCHAIN_REPO: BvioTech/violoop-builder
-          TOOLCHAIN_TAG: v0.0.3
+          TOOLCHAIN_TAG: v0.0.4
         run: |
-          wget https://github.com/$TOOLCHAIN_REPO/releases/download/$TOOLCHAIN_TAG/arm-rockchip830-linux-uclibcgnueabihf.tar.gz
+          wget https://github.com/$TOOLCHAIN_REPO/releases/download/$TOOLCHAIN_TAG/aarch64-none-linux-gnu.tar.gz
           sudo mkdir -p /workspace
-          sudo tar -xzf arm-rockchip830-linux-uclibcgnueabihf.tar.gz -C /workspace
+          sudo tar -xzf aarch64-none-linux-gnu.tar.gz -C /workspace
 
-      - name: Build for arm-rockchip830-linux-uclibcgnueabihf
+      # - name: Build for arm-rockchip830-linux-uclibcgnueabihf
+      #   run: |
+      #     ./build.sh rv1106
+      #     tar -czf dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz dist/video
+      #     sha256sum dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz > dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz.sha256
+
+      - name: Build for aarch64-none-linux-gnu
         run: |
-          ./build.sh rv1106
-          tar -czf dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz dist/video
-          sha256sum dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz > dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz.sha256
+          ./build.sh rv3576
+          tar -czf dist/aarch64-none-linux-gnu-video.tar.gz dist/video
+          sha256sum dist/aarch64-none-linux-gnu-video.tar.gz > dist/aarch64-none-linux-gnu-video.tar.gz.sha256
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-files
           path: |
-            dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz
-            dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz.sha256
+            dist/aarch64-none-linux-gnu-video.tar.gz
+            dist/aarch64-none-linux-gnu-video.tar.gz.sha256
           retention-days: 1
 
   release:
@@ -55,5 +61,5 @@ jobs:
           tag_name: ${{ github.ref_name }}
           generate_release_notes: true
           files: |
-            dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz
-            dist/arm-rockchip830-linux-uclibcgnueabihf-video.tar.gz.sha256
+            dist/aarch64-none-linux-gnu-video.tar.gz
+            dist/aarch64-none-linux-gnu-video.tar.gz.sha256

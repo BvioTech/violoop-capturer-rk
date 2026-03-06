@@ -35,7 +35,7 @@ static volatile unsigned int keep_running = 1;
 /**
  * stop running
  */
-void stop_running()
+void stop_running(int)
 {
     keep_running = 0;
 }
@@ -89,7 +89,7 @@ void *input_loop(void *arg)
         }
     }
 
-    stop_running();
+    stop_running(0);
     return NULL;
 }
 
@@ -139,7 +139,7 @@ void *output_loop(void *arg)
         free(stream.pstPack);
     }
 
-    stop_running();
+    stop_running(0);
     return NULL;
 }
 
