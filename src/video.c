@@ -63,10 +63,10 @@ int init_venc(int32_t channel_id, uint32_t width, uint32_t height, uint32_t bit_
     venc_attr.stVencAttr.u32Profile = H264E_PROFILE_MAIN;
     venc_attr.stVencAttr.u32PicWidth = width;
     venc_attr.stVencAttr.u32PicHeight = height;
-    venc_attr.stVencAttr.u32VirWidth = width;
-    venc_attr.stVencAttr.u32VirHeight = height;
+    venc_attr.stVencAttr.u32VirWidth = mb_pic_cal.u32VirWidth;
+    venc_attr.stVencAttr.u32VirHeight = mb_pic_cal.u32VirHeight;
     venc_attr.stVencAttr.u32StreamBufCnt = buffer_count;
-    venc_attr.stVencAttr.u32BufSize = calculate_pic_byte_size(width, height, V4L2_PIX_FMT_NV12);
+    venc_attr.stVencAttr.u32BufSize = mb_pic_cal.u32MBSize;
 
     // set h264 struct props
     venc_attr.stRcAttr.enRcMode = VENC_RC_MODE_H264CBR;

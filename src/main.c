@@ -7,6 +7,8 @@
 
 #include <sys/prctl.h>
 
+#include <linux/videodev2.h>
+
 #include <pthread.h>
 
 #include "rk_comm_video.h"
@@ -14,6 +16,7 @@
 #include "args.h"
 #include "socket.h"
 #include "video.h"
+#include "utils.h"
 
 #define VENC_CHANNEL 0
 // venc send frame timeout, venc get stream timeout
@@ -160,15 +163,15 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     MB_PIC_CAL_S cal;
     // auto calculate
     // on new hardware, the v4l2 cloud stride correctly. i have no idea why
-    calculate_venc(video_width, video_height, &cal);
+    // calculate_venc(video_width, video_height, &cal);
 
     // 1920 1080 will be strided to 1920 1088
     // but v4l2 dma can not fill all byes, then venc think the frame is not end and will not work at all
     // that is why we should calculate manually
-    // cal.u32VirWidth = video_width;
-    // cal.u32VirHeight = video_height;
-    // cal.u32MBSize = video_width * video_height * 3 / 2;
-    // printf("manual calculate ok %d %d %d\n", cal.u32VirWidth, cal.u32VirHeight, cal.u32MBSize);
+    cal.u32VirWidth = video_width;
+    cal.u32VirHeight = video_height;
+    cal.u32MBSize = calculate_pic_byte_size(video_width, video_height, V4L2_PIX_FMT_NV12);
+    printf("manual calculate ok %d %d %d\n", cal.u32VirWidth, cal.u32VirHeight, cal.u32MBSize);
 
     // init venc
     int ret = init_venc(VENC_CHANNEL, video_width, video_height, bit_rate, gop, STREAM_OUTPUT_BUFFER_COUNT, cal);
@@ -176,6 +179,7 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     {
         goto destroy_socket;
     }
+    unsigned int memory_pool = MB_INVALID_POOLID;
 
     // init v4l2
     int video_fd = init_v4l2(input_path, video_width, video_height);
@@ -186,7 +190,7 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     }
 
     // init buffers
-    unsigned int memory_pool = init_venc_memory(buffer_count, cal);
+    memory_pool = init_venc_memory(buffer_count, cal);
     if (memory_pool == MB_INVALID_POOLID)
     {
         goto destroy_v4l2;
