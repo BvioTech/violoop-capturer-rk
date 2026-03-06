@@ -1,10 +1,10 @@
 #!/bin/bash
 build_rv1106(){
-    docker run -it --rm -v .:/app builder:luckfox-pico /app/build_rv1106.sh
+    docker run -it --rm -v .:/app builder:luckfox-pico /app/build_1.sh
 }
 
 build_rk3576(){
-    docker run -it --rm -v .:/app builder:firefly /app/build_rk3576.sh
+    docker run -it --rm -v .:/app builder:firefly /app/build_1.sh
 }
 
 if [ $# -eq 0 ]; then
