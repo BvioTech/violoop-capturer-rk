@@ -28,7 +28,17 @@ Lib files are copied from `luckfox-pico`.
 ## Utils
 
 ```bash
+# list device
+v4l2-ctl --list-device
+
+# list format
+v4l2-ctl -d /dev/video0 --list-formats-ext 
+
+# get format
+v4l2-ctl -d /dev/video0 --get-fmt-video
+
 # set format
+v4l2-ctl -d /dev/v4l-subdev2 --set-dv-bt-timings width=1920,height=1080
 v4l2-ctl -d /dev/video0 --set-fmt-video=width=1920,height=1080,pixelformat=NV12
 
 # capture frame
