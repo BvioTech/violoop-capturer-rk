@@ -1,0 +1,5 @@
+Package: violoop-capture-rk
+Version: 0.1.3
+Architecture: arm64
+Maintainer: Alex <alexliu@zcdigitalsglobal.com>
+Description: Violoop video capture for rk

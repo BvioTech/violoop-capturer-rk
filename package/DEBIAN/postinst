@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+ln -sf /usr/local/bin/capture /usr/bin/capture
+
+exit 0

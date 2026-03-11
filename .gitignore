@@ -2,3 +2,6 @@ build
 log
 out
 dist
+
+package/usr/local/bin/*
+*.deb
