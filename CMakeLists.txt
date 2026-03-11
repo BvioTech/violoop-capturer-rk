@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(video C)
+project(capture C)
 
 option(BUILD_TEST "build test" ON)
 option(BUILD_MAIN "build main" ON)
