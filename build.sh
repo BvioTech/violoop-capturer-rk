@@ -13,9 +13,11 @@ if [ $# -eq 0 ]; then
 elif [ $# -eq 1 ]; then
     case "$1" in
 		"rv1106")
+	        echo "build for rv1106"
             build_rv1106
             ;;
 		"rk3576")
+	        echo "build for rk3576"
             build_rk3576
             ;;
         *)
