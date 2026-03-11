@@ -1,6 +1,6 @@
-# Video
+# Capture RK
 
-This is video project in luckfox for kvvm.
+This is capture project for rk.
 
 ## Doc
 
@@ -8,22 +8,19 @@ https://cdn.static.spotpear.cn/uploads/picture/learn/risc-v/luck-fox-pico/Docume
 
 ## Toolchain
 
-The toolchain is not included in this project. See `https://github.com/ZCdigitals/kvvm-ai-builder`
+The toolchain is not included in this project. See `https://github.com/BvioTech/violoop-builder`
 
-## Compile
+## Build
 
-Please compile in docker.
+Please build in docker.
 
 ```bash
-# build in container
-docker run -it --rm -v .:/app builder:luckfox-pico /app/build.sh
+./build.sh [rk1106|rk3576]
 ```
 
 ## Files
 
-Lib files are copied from `luckfox-pico`.
-
--   `include`, copied from `<path to luckfox-pico>/media/rockit/out/include`
+Lib files are copied from target system.
 
 ## Utils
 
