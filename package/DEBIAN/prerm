@@ -1,6 +1,0 @@
-#!/bin/bash
-set -e
-
-rm /usr/bin/capture
-
-exit 0
