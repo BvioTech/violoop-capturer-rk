@@ -15,7 +15,7 @@ The toolchain is not included in this project. See `https://github.com/BvioTech/
 Please build in docker.
 
 ```bash
-./build.sh [rk1106|rk3576]
+./scripts/build.sh [rk1106|rk3576]
 ```
 
 ## Files
