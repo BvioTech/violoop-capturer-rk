@@ -4,7 +4,7 @@ build_rv1106(){
 }
 
 build_rk3576(){
-    docker run -it --rm -v .:/app builder:firefly /app/scripts/build_1.sh
+    docker run -it --rm -v .:/app builder:violoop-pro /app/scripts/build_1.sh
 }
 
 if [ $# -eq 0 ]; then

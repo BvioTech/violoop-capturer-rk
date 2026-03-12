@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(capture C)
 
-option(BUILD_TEST "build test" ON)
+option(BUILD_TEST "build test" OFF)
 option(BUILD_MAIN "build main" ON)
 
 if(BUILD_TEST OR BUILD_MAIN)
@@ -14,49 +14,20 @@ if(BUILD_TEST OR BUILD_MAIN)
         PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
         REQUIRED
     )
-    find_library(XCB_LIB
-        NAMES libxcb.so
-        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
-        REQUIRED
-    )
-    find_library(XCB_DRI2_LIB
-        NAMES libxcb-dri2.so.0
-        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
-        REQUIRED
-    )
-    find_library(WAYLAND_CLIENT_LIB
-        NAMES libwayland-client.so
-        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
-        REQUIRED
-    )
-    find_library(X11_LIB
-        NAMES libX11.so
-        PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
-        REQUIRED
-    )
     find_library(DRM_LIB
         NAMES libdrm.so
         PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
         REQUIRED
     )
 
-    find_library(MALI_LIB
-        NAMES libmali.so.1
+    find_library(ROCKCHIP_MPP_LIB
+        NAMES librockchip_mpp.so
         PATHS ${SYSROOT_PATH}/usr/lib/aarch64-linux-gnu
         REQUIRED
     )
-
     find_library(ROCKIT_LIB
         NAMES librockit.so
-        REQUIRED
-    )
-    find_library(ROCKCHIP_MPP_LIB
-        NAMES librockchip_mpp.so
-        REQUIRED
-    )
-    find_library(RGA_LIB
-        NAMES librga.so
-        PATHS ${SYSROOT_PATH}/usr/local/lib/aarch64-linux-gnu
+        PATHS ${SYSROOT_PATH}/usr/local/lib
         REQUIRED
     )
 endif()
@@ -75,13 +46,7 @@ if(BUILD_TEST)
     target_link_libraries(hw_venc_test PRIVATE
         ${ROCKIT_LIB}
         ${ROCKCHIP_MPP_LIB}
-        ${RGA_LIB}
-        ${MALI_LIB}
         ${ALSA_LIB}
-        ${XCB_LIB}
-        ${XCB_DRI2_LIB}
-        ${WAYLAND_CLIENT_LIB}
-        ${X11_LIB}
         ${DRM_LIB}
     )
 
@@ -136,13 +101,7 @@ if(BUILD_TEST)
     target_link_libraries(unit_video_test PRIVATE
         ${ROCKIT_LIB}
         ${ROCKCHIP_MPP_LIB}
-        ${RGA_LIB}
-        ${MALI_LIB}
         ${ALSA_LIB}
-        ${XCB_LIB}
-        ${XCB_DRI2_LIB}
-        ${WAYLAND_CLIENT_LIB}
-        ${X11_LIB}
         ${DRM_LIB}
         Threads::Threads
     )
@@ -191,13 +150,7 @@ if(BUILD_MAIN)
     target_link_libraries(${PROJECT_NAME} PRIVATE
         ${ROCKIT_LIB}
         ${ROCKCHIP_MPP_LIB}
-        ${RGA_LIB}
-        ${MALI_LIB}
         ${ALSA_LIB}
-        ${XCB_LIB}
-        ${XCB_DRI2_LIB}
-        ${WAYLAND_CLIENT_LIB}
-        ${X11_LIB}
         ${DRM_LIB}
         Threads::Threads
     )
