@@ -16,17 +16,11 @@ jobs:
       - name: Download and setup toolchain for arm-rockchip830-linux-uclibcgnueabihf
         env:
           TOOLCHAIN_REPO: BvioTech/violoop-builder
-          TOOLCHAIN_TAG: v0.0.4
+          TOOLCHAIN_TAG: v0.0.1
         run: |
           wget https://github.com/$TOOLCHAIN_REPO/releases/download/$TOOLCHAIN_TAG/aarch64-none-linux-gnu.tar.gz
           sudo mkdir -p /workspace
           sudo tar -xzf aarch64-none-linux-gnu.tar.gz -C /workspace
-
-      # - name: Build for arm-rockchip830-linux-uclibcgnueabihf
-      #   run: |
-      #     ./build.sh rv1106
-      #     tar -czf dist/arm-rockchip830-linux-uclibcgnueabihf-capture.tar.gz dist/capture
-      #     sha256sum dist/arm-rockchip830-linux-uclibcgnueabihf-capture.tar.gz > dist/arm-rockchip830-linux-uclibcgnueabihf-capture.tar.gz.sha256
 
       - name: Build for aarch64-none-linux-gnu
         run: |
