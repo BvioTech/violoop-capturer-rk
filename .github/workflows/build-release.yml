@@ -25,16 +25,16 @@ jobs:
       - name: Build for aarch64-none-linux-gnu
         run: |
           ./scripts/build_1.sh
-          tar -czf dist/aarch64-none-linux-gnu-capture.tar.gz dist/capture
-          sha256sum dist/aarch64-none-linux-gnu-capture.tar.gz > dist/aarch64-none-linux-gnu-capture.tar.gz.sha256
+          tar -czf aarch64-none-linux-gnu-capture.tar.gz -C dist capture
+          sha256sum aarch64-none-linux-gnu-capture.tar.gz > aarch64-none-linux-gnu-capture.tar.gz.sha256
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-files
           path: |
-            dist/aarch64-none-linux-gnu-capture.tar.gz
-            dist/aarch64-none-linux-gnu-capture.tar.gz.sha256
+            aarch64-none-linux-gnu-capture.tar.gz
+            aarch64-none-linux-gnu-capture.tar.gz.sha256
           retention-days: 1
 
   release:
@@ -47,7 +47,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: release-files
-          path: ./dist
+          path: .
 
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
@@ -55,5 +55,5 @@ jobs:
           tag_name: ${{ github.ref_name }}
           generate_release_notes: true
           files: |
-            dist/aarch64-none-linux-gnu-capture.tar.gz
-            dist/aarch64-none-linux-gnu-capture.tar.gz.sha256
+            aarch64-none-linux-gnu-capture.tar.gz
+            aarch64-none-linux-gnu-capture.tar.gz.sha256
