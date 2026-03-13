@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Download and setup toolchain for arm-rockchip830-linux-uclibcgnueabihf
+      - name: Download and setup toolchain for aarch64-none-linux-gnu
         env:
           TOOLCHAIN_REPO: BvioTech/violoop-builder
           TOOLCHAIN_TAG: v0.0.1
