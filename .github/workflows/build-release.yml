@@ -24,7 +24,7 @@ jobs:
 
       - name: Build for aarch64-none-linux-gnu
         run: |
-          ./build.sh rv3576
+          ./scripts/build.sh rv3576
           tar -czf dist/aarch64-none-linux-gnu-capture.tar.gz dist/capture
           sha256sum dist/aarch64-none-linux-gnu-capture.tar.gz > dist/aarch64-none-linux-gnu-capture.tar.gz.sha256
 
