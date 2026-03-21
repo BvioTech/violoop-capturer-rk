@@ -194,6 +194,11 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
 
     // init v4l2
     int video_fd = init_v4l2(input_path, video_width, video_height);
+    if (video_fd == -1)
+    {
+        result = -1;
+        goto destroy_venc;
+    }
     unsigned int buffer_count = init_v4l2_buffers(video_fd, BUFFER_COUNT);
     if (buffer_count == 0)
     {
