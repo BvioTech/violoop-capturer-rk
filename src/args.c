@@ -9,7 +9,7 @@
 
 #include "version.h"
 
-#define DEFAULT_BIT_RATE 10 * 1024
+#define DEFAULT_BIT_RATE (10 * 1024)
 #define DEFAULT_GOP 60
 
 void print_help()
