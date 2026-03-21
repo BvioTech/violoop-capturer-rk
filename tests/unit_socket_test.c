@@ -24,7 +24,7 @@ static volatile int keep_running = 1;
 /**
  * stop running
  */
-void stop_running(int)
+void stop_running()
 {
     keep_running = 0;
 }
