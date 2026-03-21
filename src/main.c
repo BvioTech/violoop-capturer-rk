@@ -189,7 +189,14 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     // that is why we should calculate manually
     cal.u32VirWidth = video_width;
     cal.u32VirHeight = video_height;
-    cal.u32MBSize = calculate_pic_byte_size(video_width, video_height, V4L2_PIX_FMT_NV12);
+    int32_t mb_size = calculate_pic_byte_size(video_width, video_height, V4L2_PIX_FMT_NV12);
+    if (mb_size == -1)
+    {
+        printf("unsupported pixel format\n");
+        result = -1;
+        goto destroy_socket;
+    }
+    cal.u32MBSize = (uint32_t)mb_size;
     printf("manual calculate ok %d %d %d\n", cal.u32VirWidth, cal.u32VirHeight, cal.u32MBSize);
 
     // init venc
