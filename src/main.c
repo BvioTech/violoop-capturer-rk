@@ -85,13 +85,23 @@ void *input_loop(void *arg)
                         args->height,
                         args->vir_width,
                         args->vir_height,
-                        !keep_running,
+                        false,
                         TIMEOUT);
         if (ret == -1)
         {
             break;
         }
     }
+
+    // send end frame
+    input(args->venc_channel_id,
+          args->video_fd,
+          args->width,
+          args->height,
+          args->vir_width,
+          args->vir_height,
+          true,
+          TIMEOUT);
 
     stop_running(0);
     return NULL;
