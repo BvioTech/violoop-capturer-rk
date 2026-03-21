@@ -127,6 +127,12 @@ void *output_loop(void *arg)
 
     VENC_STREAM_S stream;
     stream.pstPack = malloc(sizeof(VENC_PACK_S));
+    if (stream.pstPack == NULL)
+    {
+        perror("malloc stream pack error");
+        stop_running(0);
+        return NULL;
+    }
 
     while (keep_running)
     {
