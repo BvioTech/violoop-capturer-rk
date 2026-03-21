@@ -159,6 +159,8 @@ void *output_loop(void *arg)
 
 int main_video(uint32_t video_width, uint32_t video_height, char *input_path, char *output_path, uint32_t bit_rate, uint32_t gop)
 {
+    int result = 0;
+
     // regist signal
     signal(SIGINT, stop_running);
     signal(SIGTERM, stop_running);
@@ -188,6 +190,7 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     int ret = init_venc(VENC_CHANNEL, video_width, video_height, bit_rate, gop, STREAM_OUTPUT_BUFFER_COUNT, cal);
     if (ret == -1)
     {
+        result = -1;
         goto destroy_socket;
     }
     unsigned int memory_pool = MB_INVALID_POOLID;
@@ -202,6 +205,7 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     unsigned int buffer_count = init_v4l2_buffers(video_fd, BUFFER_COUNT);
     if (buffer_count == 0)
     {
+        result = -1;
         goto destroy_venc;
     }
 
@@ -209,6 +213,7 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     memory_pool = init_venc_memory(buffer_count, cal);
     if (memory_pool == MB_INVALID_POOLID)
     {
+        result = -1;
         goto destroy_v4l2;
     }
 
@@ -216,6 +221,7 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     ret = allocate_buffers(memory_pool, video_fd, buffer_count, blocks);
     if (ret == -1)
     {
+        result = -1;
         goto destroy_v4l2;
     }
 
@@ -223,6 +229,7 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     ret = start_venc(VENC_CHANNEL);
     if (ret == -1)
     {
+        result = -1;
         goto free_buffers;
     }
 
@@ -230,6 +237,7 @@ int main_video(uint32_t video_width, uint32_t video_height, char *input_path, ch
     ret = start_v4l2(video_fd);
     if (ret == -1)
     {
+        result = -1;
         goto stop_venc;
     }
 
@@ -282,7 +290,7 @@ destroy_venc:
 destroy_socket:
     destroy_socket(socket_fd);
 
-    return 0;
+    return result;
 }
 
 int main(int argc, char *argv[])
